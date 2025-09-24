@@ -9,6 +9,8 @@ namespace Uml_diagram_editor
         public Form1()
         {
             InitializeComponent();
+            comboBox1.DataSource = Enum.GetValues(typeof(Mode));
+
             Block = new Block("MyClass", new Point(0, 0))
             {
                 Attributes = new List<string> { "int id", "string name" },
@@ -23,6 +25,7 @@ namespace Uml_diagram_editor
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
+            //quite unoptimized, use bitmap maybe into picture box?
             var g = e.Graphics;
             if (checkBox1.Checked)
             {
@@ -31,13 +34,11 @@ namespace Uml_diagram_editor
 
             Block.Draw(g);
 
-
-
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
-            if (Block.Bounds.Contains(e.Location))
+            if (Block.Detect(e.Location))
             {
                 Block.IsSelected = true;
             }
@@ -82,6 +83,44 @@ namespace Uml_diagram_editor
         private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            Invalidate(true);
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var box = sender as ComboBox;
+
+            Palette.Mode = (Mode)box.SelectedItem;
+            pictureBox1.Invalidate(true);
+        }
+
+        private void addBlockButton_Click(object sender, EventArgs e)
+        {
+            BlockEditForm blockEditForm = new BlockEditForm();
+            blockEditForm.ShowDialog();
+        }
+
+        private void pictureBox1_DoubleClick(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (Block.Detect(e.Location))
+            {
+                Block.IsSelected = true;
+                var form = new BlockEditForm(Block);
+                form.ShowDialog();
+            }
+            else
+            {
+                Block.IsSelected = false;
+            }
         }
     }
 }

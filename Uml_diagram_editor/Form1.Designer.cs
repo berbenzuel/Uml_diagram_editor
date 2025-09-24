@@ -33,6 +33,8 @@
             flowLayoutPanel1 = new FlowLayoutPanel();
             numericUpDown1 = new NumericUpDown();
             label1 = new Label();
+            comboBox1 = new ComboBox();
+            addBlockButton = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
@@ -48,6 +50,8 @@
             pictureBox1.TabStop = false;
             pictureBox1.Click += pictureBox1_Click;
             pictureBox1.Paint += pictureBox1_Paint;
+            pictureBox1.DoubleClick += pictureBox1_DoubleClick;
+            pictureBox1.MouseDoubleClick += pictureBox1_MouseDoubleClick;
             pictureBox1.MouseDown += pictureBox1_MouseDown;
             pictureBox1.MouseMove += pictureBox1_MouseMove;
             pictureBox1.MouseUp += pictureBox1_MouseUp;
@@ -69,6 +73,8 @@
             flowLayoutPanel1.Controls.Add(checkBox1);
             flowLayoutPanel1.Controls.Add(numericUpDown1);
             flowLayoutPanel1.Controls.Add(label1);
+            flowLayoutPanel1.Controls.Add(comboBox1);
+            flowLayoutPanel1.Controls.Add(addBlockButton);
             flowLayoutPanel1.Dock = DockStyle.Left;
             flowLayoutPanel1.Location = new Point(0, 0);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -83,6 +89,7 @@
             numericUpDown1.Size = new Size(111, 23);
             numericUpDown1.TabIndex = 1;
             numericUpDown1.Value = new decimal(new int[] { 10, 0, 0, 0 });
+            numericUpDown1.ValueChanged += numericUpDown1_ValueChanged;
             // 
             // label1
             // 
@@ -93,6 +100,26 @@
             label1.TabIndex = 2;
             label1.Text = "px";
             label1.Click += label1_Click;
+            // 
+            // comboBox1
+            // 
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Location = new Point(3, 32);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(121, 23);
+            comboBox1.TabIndex = 3;
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            // 
+            // addBlockButton
+            // 
+            addBlockButton.ImageAlign = ContentAlignment.MiddleLeft;
+            addBlockButton.Location = new Point(3, 61);
+            addBlockButton.Name = "addBlockButton";
+            addBlockButton.Size = new Size(193, 23);
+            addBlockButton.TabIndex = 4;
+            addBlockButton.Text = "add new Block";
+            addBlockButton.UseVisualStyleBackColor = true;
+            addBlockButton.Click += addBlockButton_Click;
             // 
             // Form1
             // 
@@ -117,5 +144,7 @@
         private FlowLayoutPanel flowLayoutPanel1;
         private NumericUpDown numericUpDown1;
         private Label label1;
+        private ComboBox comboBox1;
+        private Button addBlockButton;
     }
 }

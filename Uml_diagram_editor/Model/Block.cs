@@ -9,12 +9,12 @@ namespace Uml_diagram_editor.Model
 {
     public class Block
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         public List<string>? Attributes { get; set; } //like lists, or just string?
         public List<string>? Methods { get; set; } 
 
-        public int X { get; set; }
-        public int Y { get; set; }
+        private int X { get; set; }
+        private int Y { get; set; }
 
         public Point Location
         {
@@ -38,6 +38,8 @@ namespace Uml_diagram_editor.Model
             Name = name;
             Location = point;
         }
+
+        public Block() => this.Location = new Point(0,0); 
 
 
         public void Draw(Graphics g)
@@ -79,6 +81,11 @@ namespace Uml_diagram_editor.Model
                     }
                 }
             }
+        }
+
+        public bool Detect(Point point)
+        {
+            return this.Bounds.Contains(point);
         }
 
     }
