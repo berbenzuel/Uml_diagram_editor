@@ -1,107 +1,201 @@
+using System;
+using System.Drawing;
 using Uml_diagram_editor.Common;
+using Uml_diagram_editor.DataContent;
+using Uml_diagram_editor.DataContent.BlockContent;
+using Uml_diagram_editor.DataContent.BlockContent.Method;
+using Uml_diagram_editor.DataContent.BlockContent.Methods;
+using Uml_diagram_editor.Managers;
 using Uml_diagram_editor.Model;
 
 namespace Uml_diagram_editor
 {
     public partial class Form1 : Form
     {
-        Block Block { get; set; }
+
+
+        private BlockManager blockManager { get; set; }
+
+        private int? _selectedBlockIndex { get; set; }
+
+        private Point _picBoxMousePosition { get; set; }
+        private Point _pictureBoxAbsolutePoint = new Point(0, 0);
+
+        private Grid? grid = null;
+        private const int gridSize = 10;
+
+
         public Form1()
         {
             InitializeComponent();
-            comboBox1.DataSource = Enum.GetValues(typeof(Mode));
 
-            Block = new Block("MyClass", new Point(0, 0))
+
+
+
+            blockManager = new BlockManager();
+            blockManager.Blocks.Add(new("MyClass", new Point(0, 0))
             {
-                Attributes = new List<string> { "int id", "string name" },
-                Methods = new List<string> { "void SetName(string name)", "string GetName()" }
-            };
+                Stereotype = null,
+                Properties = new() { new()
+                {
+                    AccessType = AccessType.Public,
+                    Name = "Foo",
+                    Type = "string"
+                } },
+                Methods = new()
+                {
+                    new MethodItem()
+                    {
+                        AccessType = AccessType.Public,
+                        Name = "Bar",
+                        Type = "void",
+                        Attributes = new() {
+                            new MethodAttribute() {
+                            Name ="foo",
+                            Type = "bar",
+                            AttributeType = MethodAttributeType.In}
+                        }
+                    }
+                }
+            });
         }
 
-        private void pictureBox1_Click(object sender, EventArgs e)
+        private void InvalidateWithOffset(Rectangle bounds)
         {
+            var rect = new Rectangle(bounds.Location, bounds.Size);
+            rect.X += _pictureBoxAbsolutePoint.X;
+            rect.Y += _pictureBoxAbsolutePoint.Y;
 
+            pictureBox1.Invalidate(rect, true);
         }
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
             //quite unoptimized, use bitmap maybe into picture box?
             var g = e.Graphics;
-            if (checkBox1.Checked)
+
+            var zoom = (float)zoomTrackBar.Value / 100;
+            g.ScaleTransform(zoom, zoom);
+            //posunuti boud na zaklade zvetseni podle pozici mysi
+            g.TranslateTransform(_pictureBoxAbsolutePoint.X, _pictureBoxAbsolutePoint.Y);
+
+            
+            
+            if (grid is not null)
             {
-                Grid.Draw(g, pictureBox1.ClientRectangle, Convert.ToInt32(numericUpDown1.Value));
+                grid.Draw(g, pictureBox1.ClientRectangle, _pictureBoxAbsolutePoint, zoom);
+            }
+            foreach (var block in blockManager.Blocks)
+            {
+                block.Draw(g, gridSize);
             }
 
-            Block.Draw(g);
 
+        }
+
+        private Point GetRelative(Point point)
+        {
+
+            return new Point((int)(point.X - _pictureBoxAbsolutePoint.X ), (int)(point.Y - _pictureBoxAbsolutePoint.Y));
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
-            if (Block.Detect(e.Location))
+            if (e.Button == MouseButtons.Left)
             {
-                Block.IsSelected = true;
+                var detected = false;
+                for (var block_index = blockManager.Blocks.Count - 1; block_index >= 0; block_index--)
+                {
+                    var zoom = (float)zoomTrackBar.Value / 100;
+                    var block = blockManager.Blocks[block_index];
+                    if (!detected && block.Detect(GetRelative(e.Location)))
+                    {
+                        _selectedBlockIndex = block_index;
+                        block.IsSelected = true;
+                        detected = true;
+                        InvalidateWithOffset(block.Bounds);
+                    }
+                    else
+                    {
+                        if (block.IsSelected)
+                        {
+                            block.IsSelected = false;
+                            InvalidateWithOffset(block.Bounds);
+                        }
+
+                    }
+                }
+
             }
-            else
+            if (e.Button == MouseButtons.Right)
             {
-                Block.IsSelected = false;
+                var screenPoint = pictureBox1.PointToScreen(e.Location);
+                contextMenuStrip1.Show(screenPoint);
             }
-            Invalidate(true);
+            if (e.Button == MouseButtons.Middle)
+            {
+
+            }
+            _picBoxMousePosition = e.Location;
         }
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
 
-            if (e.Button == MouseButtons.Left && Block.Bounds.Contains(e.Location) && Block.IsSelected)
+            if (e.Button == MouseButtons.Left &&
+                _selectedBlockIndex is int index &&
+                blockManager.Blocks.ElementAtOrDefault(Index.FromStart(index)) is Block block &&
+                block.IsSelected &&
+                block.Detect(GetRelative(e.Location)))
+            {
+                var oldBounds = block.Bounds;
+                oldBounds.Inflate(5, 5);
+                block.Location = new Point((int)(e.X - _pictureBoxAbsolutePoint.X - block.Width /2), (int)(e.Y - _pictureBoxAbsolutePoint.Y - block.Height/2));
+                InvalidateWithOffset(oldBounds);
+                InvalidateWithOffset(block.Bounds);
+            }
+            if (e.Button == MouseButtons.Middle)
             {
 
-                Block.Location = new Point(e.X - Block.Width / 2, e.Y - Block.Height / 2);
 
-                Invalidate(true);
+                var _deltaX = (e.Location.X - _picBoxMousePosition.X);
+                var _deltaY = (e.Location.Y - _picBoxMousePosition.Y);
+                var point = new Point(_pictureBoxAbsolutePoint.X + (int)_deltaX, _pictureBoxAbsolutePoint.Y + (int)_deltaY);
+                _pictureBoxAbsolutePoint = point;
+                _picBoxMousePosition = e.Location;
+                Invalidate(Region, true);
             }
+
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            Invalidate(true);
+            var grid = this.checkBox1.Checked ? new Grid(gridSize) : null;
+            this.grid = grid;
+            pictureBox1.Invalidate(true);
         }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
-            if (checkBox1.Checked)
+            if (grid is not null &&
+                _selectedBlockIndex is int index &&
+                blockManager.Blocks.ElementAtOrDefault(Index.FromStart(index)) is Block block)
             {
-                Block.Location = Grid.Snap(Block.Location, Convert.ToInt32(numericUpDown1.Value));
+                block.Location = grid.Snap(block.Location);
                 Invalidate(true);
             }
         }
 
-        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        private void AddBlock(object sender, EventArgs e)
         {
-
-        }
-
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
-        {
-            Invalidate(true);
-        }
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var box = sender as ComboBox;
-
-            Palette.Mode = (Mode)box.SelectedItem;
-            pictureBox1.Invalidate(true);
-        }
-
-        private void addBlockButton_Click(object sender, EventArgs e)
-        {
-            BlockEditForm blockEditForm = new BlockEditForm();
-            blockEditForm.ShowDialog();
+            var point = _picBoxMousePosition;
+            point.Offset(-_pictureBoxAbsolutePoint.X, -_pictureBoxAbsolutePoint.Y);
+            var block = blockManager.AddBlock(point);
+            if (block is not null)
+            {
+                InvalidateWithOffset(block.Bounds);
+            }
         }
 
         private void pictureBox1_DoubleClick(object sender, EventArgs e)
@@ -111,16 +205,70 @@ namespace Uml_diagram_editor
 
         private void pictureBox1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (Block.Detect(e.Location))
+            var detected = false;
+            for (var block_index = blockManager.Blocks.Count - 1; block_index >= 0; block_index--)
             {
-                Block.IsSelected = true;
-                var form = new BlockEditForm(Block);
-                form.ShowDialog();
+                var block = blockManager.Blocks[block_index];
+                if (!detected && block.Detect(GetRelative(e.Location)))
+                {
+                    block.IsSelected = true;
+                    _selectedBlockIndex = block_index;
+                    if (blockManager.EditBlock(block))
+                    {
+                        Invalidate(true);
+                    }
+                    detected = true;
+                }
+                else
+                {
+                    block.IsSelected = false;
+                }
             }
-            else
+            Invalidate();
+        }
+
+
+
+        private void deleteBlockToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_selectedBlockIndex is int index)
             {
-                Block.IsSelected = false;
+                blockManager.Blocks.RemoveAt(index);
+                _selectedBlockIndex = null;
+                pictureBox1.Invalidate(true);
             }
+        }
+
+        private void editBlockToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_selectedBlockIndex is int index)
+            {
+                var block = blockManager.EditBlockAt(index);
+                if (block is not null)
+                {
+                    Invalidate(true); //implement func for offcet
+                }
+
+            }
+        }
+
+        private void pictureBox1_MouseHover(object sender, EventArgs e)
+        {
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void zoomTrackBar_Scroll(object sender, EventArgs e)
+        {
+            pictureBox1.Invalidate(true);
         }
     }
 }

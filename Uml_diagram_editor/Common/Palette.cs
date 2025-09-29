@@ -44,6 +44,14 @@ namespace Uml_diagram_editor.Common
             }
         }
 
+        public static Font DefaultFont
+        {
+            get 
+            {
+                return new Font("Comic Sans MS", 8);
+            }
+        }
+
 
 
     }
