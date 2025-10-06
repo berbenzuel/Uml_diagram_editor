@@ -35,6 +35,12 @@ namespace Uml_diagram_editor
             nameTextBox = new TextBox();
             label1 = new Label();
             propertiesView = new DataGridView();
+            nameDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            typeDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            propertiesAccessTypeColumn = new DataGridViewComboBoxColumn();
+            dataGridViewCheckBoxColumn1 = new DataGridViewCheckBoxColumn();
+            dataGridViewCheckBoxColumn2 = new DataGridViewCheckBoxColumn();
+            IsReadOnly = new DataGridViewCheckBoxColumn();
             propertyItemBindingSource2 = new BindingSource(components);
             okButton = new Button();
             cancelButton = new Button();
@@ -48,6 +54,12 @@ namespace Uml_diagram_editor
             flowLayoutPanel1 = new FlowLayoutPanel();
             label3 = new Label();
             methodsView = new DataGridView();
+            aghfoo = new DataGridViewTextBoxColumn();
+            typeDataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
+            methodsAccessTypeColumn = new DataGridViewComboBoxColumn();
+            attributesColumn = new DataGridViewTextBoxColumn();
+            IsAbstract = new DataGridViewCheckBoxColumn();
+            IsStatic = new DataGridViewCheckBoxColumn();
             methodItemBindingSource = new BindingSource(components);
             propertyItemBindingSource1 = new BindingSource(components);
             errorProvider1 = new ErrorProvider(components);
@@ -58,18 +70,6 @@ namespace Uml_diagram_editor
             accessTypeDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             isAbstractCheckBox = new CheckBox();
             isStaticCheckBox = new CheckBox();
-            nameDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            typeDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            propertiesAccessTypeColumn = new DataGridViewComboBoxColumn();
-            dataGridViewCheckBoxColumn1 = new DataGridViewCheckBoxColumn();
-            dataGridViewCheckBoxColumn2 = new DataGridViewCheckBoxColumn();
-            IsReadOnly = new DataGridViewCheckBoxColumn();
-            aghfoo = new DataGridViewTextBoxColumn();
-            typeDataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
-            methodsAccessTypeColumn = new DataGridViewComboBoxColumn();
-            attributesColumn = new DataGridViewTextBoxColumn();
-            IsAbstract = new DataGridViewCheckBoxColumn();
-            IsStatic = new DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)propertiesView).BeginInit();
             ((System.ComponentModel.ISupportInitialize)propertyItemBindingSource2).BeginInit();
             flowLayoutPanel3.SuspendLayout();
@@ -121,6 +121,44 @@ namespace Uml_diagram_editor
             propertiesView.Name = "propertiesView";
             propertiesView.Size = new Size(715, 100);
             propertiesView.TabIndex = 2;
+            // 
+            // nameDataGridViewTextBoxColumn
+            // 
+            nameDataGridViewTextBoxColumn.DataPropertyName = "Name";
+            nameDataGridViewTextBoxColumn.HeaderText = "Name";
+            nameDataGridViewTextBoxColumn.Name = "nameDataGridViewTextBoxColumn";
+            // 
+            // typeDataGridViewTextBoxColumn
+            // 
+            typeDataGridViewTextBoxColumn.DataPropertyName = "Type";
+            typeDataGridViewTextBoxColumn.HeaderText = "Type";
+            typeDataGridViewTextBoxColumn.Name = "typeDataGridViewTextBoxColumn";
+            // 
+            // propertiesAccessTypeColumn
+            // 
+            propertiesAccessTypeColumn.DataPropertyName = "AccessType";
+            propertiesAccessTypeColumn.HeaderText = "AccessType";
+            propertiesAccessTypeColumn.Name = "propertiesAccessTypeColumn";
+            propertiesAccessTypeColumn.Resizable = DataGridViewTriState.True;
+            propertiesAccessTypeColumn.SortMode = DataGridViewColumnSortMode.Automatic;
+            // 
+            // dataGridViewCheckBoxColumn1
+            // 
+            dataGridViewCheckBoxColumn1.DataPropertyName = "IsStatic";
+            dataGridViewCheckBoxColumn1.HeaderText = "IsStatic";
+            dataGridViewCheckBoxColumn1.Name = "dataGridViewCheckBoxColumn1";
+            // 
+            // dataGridViewCheckBoxColumn2
+            // 
+            dataGridViewCheckBoxColumn2.DataPropertyName = "IsAbstract";
+            dataGridViewCheckBoxColumn2.HeaderText = "IsAbstract";
+            dataGridViewCheckBoxColumn2.Name = "dataGridViewCheckBoxColumn2";
+            // 
+            // IsReadOnly
+            // 
+            IsReadOnly.DataPropertyName = "IsReadOnly";
+            IsReadOnly.HeaderText = "IsReadOnly";
+            IsReadOnly.Name = "IsReadOnly";
             // 
             // propertyItemBindingSource2
             // 
@@ -255,6 +293,45 @@ namespace Uml_diagram_editor
             methodsView.TabIndex = 7;
             methodsView.CellContentClick += dataGridView2_CellContentClick;
             // 
+            // aghfoo
+            // 
+            aghfoo.DataPropertyName = "Name";
+            aghfoo.HeaderText = "Name";
+            aghfoo.Name = "aghfoo";
+            // 
+            // typeDataGridViewTextBoxColumn1
+            // 
+            typeDataGridViewTextBoxColumn1.DataPropertyName = "Type";
+            typeDataGridViewTextBoxColumn1.HeaderText = "Type";
+            typeDataGridViewTextBoxColumn1.Name = "typeDataGridViewTextBoxColumn1";
+            // 
+            // methodsAccessTypeColumn
+            // 
+            methodsAccessTypeColumn.DataPropertyName = "AccessType";
+            methodsAccessTypeColumn.HeaderText = "AccessType";
+            methodsAccessTypeColumn.Name = "methodsAccessTypeColumn";
+            methodsAccessTypeColumn.Resizable = DataGridViewTriState.True;
+            methodsAccessTypeColumn.SortMode = DataGridViewColumnSortMode.Automatic;
+            // 
+            // attributesColumn
+            // 
+            attributesColumn.HeaderText = "Attributes";
+            attributesColumn.Name = "attributesColumn";
+            attributesColumn.ReadOnly = true;
+            attributesColumn.Resizable = DataGridViewTriState.True;
+            // 
+            // IsAbstract
+            // 
+            IsAbstract.DataPropertyName = "IsAbstract";
+            IsAbstract.HeaderText = "IsAbstract";
+            IsAbstract.Name = "IsAbstract";
+            // 
+            // IsStatic
+            // 
+            IsStatic.DataPropertyName = "IsStatic";
+            IsStatic.HeaderText = "IsStatic";
+            IsStatic.Name = "IsStatic";
+            // 
             // methodItemBindingSource
             // 
             methodItemBindingSource.DataSource = typeof(DataContent.BlockContent.Methods.MethodItem);
@@ -313,83 +390,6 @@ namespace Uml_diagram_editor
             isStaticCheckBox.Text = "static";
             isStaticCheckBox.UseVisualStyleBackColor = true;
             // 
-            // nameDataGridViewTextBoxColumn
-            // 
-            nameDataGridViewTextBoxColumn.DataPropertyName = "Name";
-            nameDataGridViewTextBoxColumn.HeaderText = "Name";
-            nameDataGridViewTextBoxColumn.Name = "nameDataGridViewTextBoxColumn";
-            // 
-            // typeDataGridViewTextBoxColumn
-            // 
-            typeDataGridViewTextBoxColumn.DataPropertyName = "Type";
-            typeDataGridViewTextBoxColumn.HeaderText = "Type";
-            typeDataGridViewTextBoxColumn.Name = "typeDataGridViewTextBoxColumn";
-            // 
-            // propertiesAccessTypeColumn
-            // 
-            propertiesAccessTypeColumn.DataPropertyName = "AccessType";
-            propertiesAccessTypeColumn.HeaderText = "AccessType";
-            propertiesAccessTypeColumn.Name = "propertiesAccessTypeColumn";
-            propertiesAccessTypeColumn.Resizable = DataGridViewTriState.True;
-            propertiesAccessTypeColumn.SortMode = DataGridViewColumnSortMode.Automatic;
-            // 
-            // dataGridViewCheckBoxColumn1
-            // 
-            dataGridViewCheckBoxColumn1.DataPropertyName = "IsStatic";
-            dataGridViewCheckBoxColumn1.HeaderText = "IsStatic";
-            dataGridViewCheckBoxColumn1.Name = "dataGridViewCheckBoxColumn1";
-            // 
-            // dataGridViewCheckBoxColumn2
-            // 
-            dataGridViewCheckBoxColumn2.DataPropertyName = "IsAbstract";
-            dataGridViewCheckBoxColumn2.HeaderText = "IsAbstract";
-            dataGridViewCheckBoxColumn2.Name = "dataGridViewCheckBoxColumn2";
-            // 
-            // IsReadOnly
-            // 
-            IsReadOnly.DataPropertyName = "IsReadOnly";
-            IsReadOnly.HeaderText = "IsReadOnly";
-            IsReadOnly.Name = "IsReadOnly";
-            // 
-            // aghfoo
-            // 
-            aghfoo.DataPropertyName = "Name";
-            aghfoo.HeaderText = "Name";
-            aghfoo.Name = "aghfoo";
-            // 
-            // typeDataGridViewTextBoxColumn1
-            // 
-            typeDataGridViewTextBoxColumn1.DataPropertyName = "Type";
-            typeDataGridViewTextBoxColumn1.HeaderText = "Type";
-            typeDataGridViewTextBoxColumn1.Name = "typeDataGridViewTextBoxColumn1";
-            // 
-            // methodsAccessTypeColumn
-            // 
-            methodsAccessTypeColumn.DataPropertyName = "AccessType";
-            methodsAccessTypeColumn.HeaderText = "AccessType";
-            methodsAccessTypeColumn.Name = "methodsAccessTypeColumn";
-            methodsAccessTypeColumn.Resizable = DataGridViewTriState.True;
-            methodsAccessTypeColumn.SortMode = DataGridViewColumnSortMode.Automatic;
-            // 
-            // attributesColumn
-            // 
-            attributesColumn.HeaderText = "Attributes";
-            attributesColumn.Name = "attributesColumn";
-            attributesColumn.ReadOnly = true;
-            attributesColumn.Resizable = DataGridViewTriState.True;
-            // 
-            // IsAbstract
-            // 
-            IsAbstract.DataPropertyName = "IsAbstract";
-            IsAbstract.HeaderText = "IsAbstract";
-            IsAbstract.Name = "IsAbstract";
-            // 
-            // IsStatic
-            // 
-            IsStatic.DataPropertyName = "IsStatic";
-            IsStatic.HeaderText = "IsStatic";
-            IsStatic.Name = "IsStatic";
-            // 
             // BlockEditForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -403,6 +403,9 @@ namespace Uml_diagram_editor
             Name = "BlockEditForm";
             Text = "Form2";
             FormClosing += BlockEditForm_FormClosing;
+            FormClosed += BlockEditForm_FormClosed;
+            Load += BlockEditForm_Load;
+            Validating += BlockEditForm_Validating;
             ((System.ComponentModel.ISupportInitialize)propertiesView).EndInit();
             ((System.ComponentModel.ISupportInitialize)propertyItemBindingSource2).EndInit();
             flowLayoutPanel3.ResumeLayout(false);

@@ -26,7 +26,18 @@ namespace Uml_diagram_editor.Model
 
         public bool IsSelected { get; set; } = false;
 
-        public Rectangle Bounds => new Rectangle(X, Y, Width, Height);
+        public Rectangle Bounds { 
+            get => new Rectangle(X, Y, Width, Height); 
+            set {
+                this.X = value.X;
+                this.Y = value.Y;
+                this.Width = value.Width;
+                this.Height = value.Height;
+            }
+        }
+
+        public abstract void Draw(Graphics g, int gridSize);
+        public abstract bool Detect(Point point);
 
 
     }

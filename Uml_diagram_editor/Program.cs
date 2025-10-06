@@ -1,3 +1,5 @@
+using Notation;
+
 namespace Uml_diagram_editor
 {
     internal static class Program

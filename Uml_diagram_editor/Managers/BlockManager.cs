@@ -1,18 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Uml_diagram_editor.DataContent;
+using Uml_diagram_editor.DataContent.SavableContent;
 using Uml_diagram_editor.Model;
-using System.Text.Json;
 
 namespace Uml_diagram_editor.Managers
 {
     public class BlockManager
     {
         public List<Block> Blocks = new();
-        
+        private int lastIdentity = 0;
+
+
         public Block? AddBlock(Point location)
         {
             var block = new Block(location);
@@ -20,6 +25,8 @@ namespace Uml_diagram_editor.Managers
             form.ShowDialog();
             if (form.DialogResult == DialogResult.OK)
             {
+                lastIdentity++;
+                block.BlockIdentity = lastIdentity;
                 Blocks.Add(block);
                 return block;
             }
@@ -47,36 +54,19 @@ namespace Uml_diagram_editor.Managers
 
         public bool EditBlock(Block block)
         {
-            // Make a deep copy of the block to avoid modifying the original unless confirmed
-            var blockCopy = DeepCopy(block); // Assumes Block implements ICloneable or has a Clone method
-            var form = new BlockEditForm(blockCopy);
-                
-            if (form.ShowDialog() == DialogResult.OK)
-            {
-                Blocks.Remove(block);
-                Blocks.Add(form.Content);
-            }
 
-            return form.DialogResult == DialogResult.OK;
-        }
+            var form = new BlockEditForm(block);
+            return form.ShowDialog() == DialogResult.OK;
 
-        public Block? EditBlockAt(int index)
-        {
-            try
-            {
-                var block = Blocks[index];
-                EditBlock(block);
-                return block;
-            }
-            catch
-            {
-                return null;
-            }
         }
-        public Block DeepCopy(Block block)
+        
+
+        public void ProcessContent(Content content)
         {
-            var json = JsonSerializer.Serialize(block);
-            return JsonSerializer.Deserialize<Block>(json);
+            
+            this.Blocks.Clear();
+            this.Blocks = content.Blocks;
+            lastIdentity = Blocks.Max(b=> b.BlockIdentity);
         }
     }
 }

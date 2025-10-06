@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Uml_diagram_editor.BlockEditForms;
@@ -20,14 +21,16 @@ namespace Uml_diagram_editor
 {
     public partial class BlockEditForm : Form
     {
-        public Block Content { get; private set; }
+        public Block EditableContent { get; private set; }
+        private Block _originalContent { get; set; }
 
         private BindingList<PropertyItem> _properties = new();
         private BindingList<MethodItem> _methods = new();
 
         public BlockEditForm(Block block)
         {
-            this.Content = block;
+            _originalContent = block;
+            this.EditableContent = DeepCopy(block);
             InitializeComponent();
 
             this.okButton.DialogResult = DialogResult.OK;
@@ -43,18 +46,18 @@ namespace Uml_diagram_editor
 
         private void InitializeData()
         {
-            nameTextBox.Text = Content.Name;
+            nameTextBox.Text = EditableContent.Name;
             stereotypeComboBox.DataSource = Enum.GetValues(typeof(Stereotype)); // stereotypeList should be a List<Stereotype>
-            stereotypeComboBox.DataBindings.Add("SelectedItem", Content, "Stereotype", true, DataSourceUpdateMode.OnPropertyChanged);
+            stereotypeComboBox.DataBindings.Add("SelectedItem", EditableContent, "Stereotype", true, DataSourceUpdateMode.OnPropertyChanged);
 
 
 
-            isAbstractCheckBox.Checked = Content.IsAbstract;
-            isStaticCheckBox.Checked = Content.IsStatic;
+            isAbstractCheckBox.Checked = EditableContent.IsAbstract;
+            isStaticCheckBox.Checked = EditableContent.IsStatic;
 
 
-            this._properties = Content.Properties;
-            this._methods = Content.Methods;
+            this._properties = new(EditableContent.Properties);
+            this._methods = new(EditableContent.Methods);
 
             this.propertiesView.DataSource = this._properties;
             this.methodsView.DataSource = this._methods;
@@ -78,7 +81,7 @@ namespace Uml_diagram_editor
             var form = new MethodeAttributesEditForm(methodItem);
             if (form.ShowDialog(this) == DialogResult.OK)
             {
-                Content.Methods[e.RowIndex] = form.Method;
+                EditableContent.Methods[e.RowIndex] = form.Method;
             }
         }
 
@@ -100,7 +103,7 @@ namespace Uml_diagram_editor
 
         private void BlockEditForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            
+            if (e.Cancel) return;
 
         }
 
@@ -114,16 +117,54 @@ namespace Uml_diagram_editor
         {
             if (!string.IsNullOrWhiteSpace(nameTextBox.Text))
             {
-                Content.Name = nameTextBox.Text;
-                Content.Stereotype = stereotypeComboBox.SelectedItem as Stereotype?;
-                Content.Properties = this._properties;
-                Content.Methods = this._methods;
-                Content.IsAbstract = isAbstractCheckBox.Checked;
-                Content.IsStatic = isStaticCheckBox.Checked;
+                EditableContent.Name = nameTextBox.Text;
+                EditableContent.Stereotype = (Stereotype)stereotypeComboBox.SelectedItem;
+                EditableContent.Properties = new(this._properties);
+                EditableContent.Methods = new(this._methods);
+                EditableContent.IsAbstract = isAbstractCheckBox.Checked;
+                EditableContent.IsStatic = isStaticCheckBox.Checked;
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
-            
+        }
+
+        private void BlockEditForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (this.DialogResult == DialogResult.OK)
+            {
+                _originalContent.Name = EditableContent.Name;
+                _originalContent.Stereotype = EditableContent.Stereotype;
+                _originalContent.Properties = EditableContent.Properties;
+                _originalContent.Methods = EditableContent.Methods;
+                _originalContent.IsAbstract = EditableContent.IsAbstract;
+                _originalContent.IsStatic = EditableContent.IsStatic;
+
+                return;
+            }
+            else
+            {
+                this.DialogResult = DialogResult.Cancel;
+
+            }
+        }
+
+        private void BlockEditForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        public Block DeepCopy(Block block)
+        {
+            return JsonSerializer.Deserialize<Block>(JsonSerializer.Serialize(block));
+        }
+
+        private void BlockEditForm_Validating(object sender, CancelEventArgs e)
+        {
+            if(!string.IsNullOrEmpty(nameTextBox.Text))
+            {
+                errorProvider1.SetError(nameTextBox, "cannot be empty");
+                e.Cancel = true;
+            }
         }
     }
 }
