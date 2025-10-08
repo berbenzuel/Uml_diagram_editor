@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Uml_diagram_editor.Common;
 using Uml_diagram_editor.DataContent;
 using Uml_diagram_editor.DataContent.RelationContent;
 using Uml_diagram_editor.DataContent.SavableContent;
@@ -50,8 +51,30 @@ namespace Uml_diagram_editor.Managers
             }
         }
 
-        public void ExportToPng(PictureBox picture)
+        public void ExportToPng(Span<Block> blocks, Span<Relation> relations)
         {
+            if (blocks.IsEmpty)
+            {
+                MessageBox.Show("There is no block to export!");
+                return;
+            }
+            var leftTopPoint = blocks[0].Location;
+            var rightBottomPoint = blocks[0].Location;
+            rightBottomPoint.Offset(blocks[0].Width, blocks[0].Height);
+
+           
+            foreach (var block in blocks)
+            {
+                if(block.Location.X < leftTopPoint.X) leftTopPoint.X = block.Location.X;
+                if(block.Location.X + block.Width > rightBottomPoint.X) rightBottomPoint.X = block.Location.X + block.Width;
+                if(block.Location.Y < leftTopPoint.Y) leftTopPoint.Y = block.Location.Y;
+                if(block.Location.Y + block.Height > rightBottomPoint.Y) rightBottomPoint.Y = block.Location.Y + block.Height;
+            }
+
+            var bounds = new Rectangle(leftTopPoint, new Size(rightBottomPoint.X - leftTopPoint.X, rightBottomPoint.Y - leftTopPoint.Y));
+            bounds.Inflate(50, 50);//make it little bigger:)
+
+
             using (var dialog = new SaveFileDialog())
             {
                 dialog.Filter = "PNG Image|*.png|JPEG Image|*.jpg";
@@ -60,8 +83,20 @@ namespace Uml_diagram_editor.Managers
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    var bitmap = new Bitmap(picture.ClientSize.Width, picture.ClientSize.Height);
-                    picture.DrawToBitmap(bitmap, picture.ClientRectangle);
+                    var bitmap = new Bitmap(bounds.Width, bounds.Height);
+                    using var g = Graphics.FromImage(bitmap);
+                    g.Clear(Palette.Background);
+                    g.TranslateTransform(-bounds.X, -bounds.Y);
+                    foreach (var block in blocks)
+                    {
+                        block.IsSelected = false;
+                        block.Draw(g, Palette.GridSize);
+                    }
+                    foreach (var relation in relations)
+                    {
+                        relation.IsSelected = false;
+                        relation.Draw(g, Palette.GridSize);
+                    }
                     bitmap.Save(dialog.FileName);
                 }
             }
@@ -122,6 +157,7 @@ namespace Uml_diagram_editor.Managers
                     card.ToCardinal = r.CardinalTo ?? throw new ArgumentNullException("cardinal to not found");
                     card.FromCardinal = r.CardinalFrom ?? throw new ArgumentNullException("cardinal to not found");
                 }
+                content.Relations.Add(rel);
             });
 
             return content;
@@ -177,6 +213,7 @@ namespace Uml_diagram_editor.Managers
                     IsAbstract = block.IsAbstract,
                     IsStatic = block.IsStatic,
                     Stereotype = block.Stereotype,
+                    Point = block.Location,
                 });
             }
             return list;

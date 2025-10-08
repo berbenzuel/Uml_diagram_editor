@@ -63,6 +63,8 @@ namespace Uml_diagram_editor.Common
         public static int PathWidth => 3;
         public static Color PathColor => Color.Black;
         public static Color PathColorActive => Color.LightPink;
+
+        public static int GridSize => 20;
         
 
 

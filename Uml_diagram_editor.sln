@@ -5,7 +5,7 @@ VisualStudioVersion = 17.14.36202.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uml_diagram_editor", "Uml_diagram_editor\Uml_diagram_editor.csproj", "{1C5C35F2-EC12-4654-85A6-5FA39897044E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notation", "Notation\Notation.csproj", "{38CE0B86-873C-4F41-A2FB-CF3FB17B1031}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator", "CodeGenerator\CodeGenerator.csproj", "{09187754-92EA-4EF3-960A-0CA4C1721629}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{1C5C35F2-EC12-4654-85A6-5FA39897044E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C5C35F2-EC12-4654-85A6-5FA39897044E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C5C35F2-EC12-4654-85A6-5FA39897044E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{38CE0B86-873C-4F41-A2FB-CF3FB17B1031}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{38CE0B86-873C-4F41-A2FB-CF3FB17B1031}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{38CE0B86-873C-4F41-A2FB-CF3FB17B1031}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{38CE0B86-873C-4F41-A2FB-CF3FB17B1031}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09187754-92EA-4EF3-960A-0CA4C1721629}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09187754-92EA-4EF3-960A-0CA4C1721629}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09187754-92EA-4EF3-960A-0CA4C1721629}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09187754-92EA-4EF3-960A-0CA4C1721629}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

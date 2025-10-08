@@ -30,7 +30,7 @@ namespace Uml_diagram_editor
         private Point _pictureBoxAbsolutePoint = new Point(0, 0);
 
         private Grid? grid = null;
-        private const int gridSize = 10;
+        //private const int Palette.Palette.GridSize = 10;
 
         private bool _relationSelectionEnabled = false;
         private RelationType? CurrentRelationType = null;
@@ -40,62 +40,9 @@ namespace Uml_diagram_editor
         {
             InitializeComponent();
 
-
             blockManager = new BlockManager();
             relationManager = new RelationManager();
             IoManager = new IoManager();
-            blockManager.Blocks.Add(new("MyClass", new Point(0, 0))
-            {
-                Stereotype = Stereotype.Default,
-                Properties = new() { new()
-                {
-                    AccessType = AccessType.Public,
-                    Name = "Foo",
-                    Type = "string"
-                } },
-                Methods = new()
-                {
-                    new MethodItem()
-                    {
-                        AccessType = AccessType.Public,
-                        Name = "Bar",
-                        Type = "void",
-                        Attributes = new() {
-                            new MethodAttribute() {
-                            Name ="foo",
-                            Type = "bar",
-                            AttributeType = MethodAttributeType.In}
-                        }
-                    }
-                }
-            });
-            blockManager.Blocks.Add(new("MyClass2", new Point(200, 200))
-            {
-                Stereotype = Stereotype.Interface,
-                Properties = new() { new()
-                {
-                    AccessType = AccessType.Public,
-                    Name = "Foo",
-                    Type = "string"
-                } },
-                Methods = new()
-                {
-                    new MethodItem()
-                    {
-                        AccessType = AccessType.Public,
-                        Name = "Bar",
-                        Type = "void",
-                        Attributes = new() {
-                            new MethodAttribute() {
-                            Name ="foo",
-                            Type = "bar",
-                            AttributeType = MethodAttributeType.In}
-                        }
-                    }
-                }
-            });
-
-            relationManager.Relations.Add(new AssociationRelation(blockManager.Blocks[0], blockManager.Blocks[1]));
         }
 
         private void InvalidateWithOffset(Rectangle bounds)
@@ -124,11 +71,11 @@ namespace Uml_diagram_editor
             }
             foreach (var block in blockManager.Blocks)
             {
-                block.Draw(g, gridSize);
+                block.Draw(g, Palette.GridSize);
             }
             foreach (var relation in relationManager.Relations)
             {
-                relation.Draw(g, gridSize);
+                relation.Draw(g, Palette.GridSize);
             }
 
 
@@ -258,7 +205,7 @@ namespace Uml_diagram_editor
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            var grid = this.checkBox1.Checked ? new Grid(gridSize) : null;
+            var grid = this.checkBox1.Checked ? new Grid(Palette.GridSize) : null;
             this.grid = grid;
             pictureBox1.Invalidate(true);
         }
@@ -443,7 +390,7 @@ namespace Uml_diagram_editor
 
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            IoManager.ExportToPng(pictureBox1);
+            IoManager.ExportToPng(CollectionsMarshal.AsSpan(blockManager.Blocks), CollectionsMarshal.AsSpan(relationManager.Relations));
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
